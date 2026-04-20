@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VPN Service</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 700px; }
+    .status { padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; }
+    .connected { background: #e6ffed; color: #065f46; }
+    .disconnected { background: #fee2e2; color: #991b1b; }
+    .flash { padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; }
+    .success { background: #e6ffed; color: #065f46; }
+    .error { background: #fee2e2; color: #991b1b; }
+    form { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+    label { display: block; margin-top: 0.75rem; font-weight: bold; }
+    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; }
+    button { margin-top: 1rem; padding: 0.6rem 1rem; border: none; border-radius: 6px; cursor: pointer; }
+    .connect { background: #2563eb; color: white; }
+    .disconnect { background: #dc2626; color: white; }
+  </style>
+</head>
+<body>
+  <h1>VPN Service Control Panel</h1>
+
+  <div class="status {{ 'connected' if status.connected else 'disconnected' }}">
+    Status: {{ 'Connected' if status.connected else 'Disconnected' }}
+    {% if status.connected and status.pid %}
+      (PID: {{ status.pid }})
+    {% endif %}
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form action="{{ url_for('connect') }}" method="post">
+    <h2>Connect VPN</h2>
+    <label for="config_path">OpenVPN Config Path (.ovpn on server)</label>
+    <input id="config_path" name="config_path" type="text" placeholder="/etc/openvpn/client.ovpn" required>
+
+    <label for="username">Username (optional)</label>
+    <input id="username" name="username" type="text">
+
+    <label for="password">Password (optional)</label>
+    <input id="password" name="password" type="password">
+
+    <button class="connect" type="submit">Connect</button>
+  </form>
+
+  <form action="{{ url_for('disconnect') }}" method="post">
+    <h2>Disconnect VPN</h2>
+    <button class="disconnect" type="submit">Disconnect</button>
+  </form>
+</body>
+</html>
