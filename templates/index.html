@@ -42,18 +42,20 @@
     <h2>Connect VPN</h2>
     <label for="config_path">OpenVPN Config Path (.ovpn on server)</label>
     <input id="config_path" name="config_path" type="text" placeholder="/etc/openvpn/client.ovpn" required>
-
-    <label for="username">Username (optional)</label>
-    <input id="username" name="username" type="text">
-
-    <label for="password">Password (optional)</label>
-    <input id="password" name="password" type="password">
+    {% if auth_required %}
+      <label for="access_token">Access Token</label>
+      <input id="access_token" name="access_token" type="password" required>
+    {% endif %}
 
     <button class="connect" type="submit">Connect</button>
   </form>
 
   <form action="{{ url_for('disconnect') }}" method="post">
     <h2>Disconnect VPN</h2>
+    {% if auth_required %}
+      <label for="access_token_disconnect">Access Token</label>
+      <input id="access_token_disconnect" name="access_token" type="password" required>
+    {% endif %}
     <button class="disconnect" type="submit">Disconnect</button>
   </form>
 </body>
